@@ -729,4 +729,7 @@ elif st.session_state.step == 6:
         st.success("Excel gegenereerd - klik hierboven om te downloaden.")
 
     st.divider()
-    if 
+    if st.button("Opnieuw beginnen"):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
