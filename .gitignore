@@ -1,0 +1,31 @@
+# === Secrets - NOOIT committen ===
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# Streamlit Cloud secrets
+.streamlit/secrets.toml
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# === Output + runtime-artefacten ===
+uit_*/
+*.xlsx~
+
+# === Editor / OS ===
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+tests/_output/

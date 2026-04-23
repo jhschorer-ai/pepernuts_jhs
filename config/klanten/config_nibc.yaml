@@ -1,0 +1,223 @@
+# NIBC — klant-config voor evaluatiemachine + planningsmachine
+# v0.2 — uitgebreid met planningsmachine-velden (campagnes, kanalen, fases,
+#        benchmarks, keybeliefs, flight_defaults, kpi_targets, exact, creditcard).
+# Evaluatiemachine negeert onbekende keys, dus volledig backwards-compatible.
+
+klant:
+  code: nibc
+  naam: NIBC
+  type: bank
+
+financieel:
+  marge_pct_default: 0.18
+  marge_pct_range: [0.18, 0.20]
+  agency_fee_pct: 0.0
+  btw_pct: 21.0                  # default BTW op media+uren; pas aan voor vrijgestelde klanten
+  valuta: EUR
+
+productlijnen:
+  sparen:
+    code: SPR
+    default_kpi_primary: conversies
+    typische_tactieken: [meta, google_search, dv360, dpg]
+  termijndeposito:
+    code: TDP
+    default_kpi_primary: conversies
+    typische_tactieken: [meta, google_search, dpg]
+  hypotheken:
+    code: HYP
+    default_kpi_primary: aanvragen
+    typische_tactieken: [meta, google_search, linkedin]
+  bonusacties:
+    code: BON
+    default_kpi_primary: aanvragen
+    typische_tactieken: [meta, google_search]
+  organische_boost:
+    code: ORG
+    default_kpi_primary: bereik
+    typische_tactieken: [meta_organic, linkedin_organic]
+
+naamgevingsconventie:
+  pattern: "{klant}_{productlijn}_{yyyy-mm}_{kanaal}-{placement}_{format}_{doelgroep}"
+  separator: "_"
+
+rapportage:
+  ppt_template: templates/nibc_evaluatie.pptx
+  tone_of_voice: zakelijk_helder
+  taal: nl
+  slide_structuur:
+    - cover
+    - management_summary
+    - kpi_scorecard
+    - per_tactiek
+    - cross_tactiek_inzichten
+    - learnings
+    - aanbevelingen_volgende_campagne
+
+plan_bronnen:
+  google_sheet_master: "https://docs.google.com/spreadsheets/d/12aD3ACC5L0f5koaBrCf0i1TXL_uGY86o9xh6DiO2MZY"
+  excel_patroon: "NIBC - *.xlsx"
+
+# =========================================================================
+#  Planningsmachine-specifieke velden
+# =========================================================================
+
+campagnes:
+  - code: PAASBONUS
+    naam: Paasbonus
+    productlijn: bonusacties
+    jaren: [2025, 2026]
+  - code: VALENTIJN
+    naam: Valentijnsactie
+    productlijn: bonusacties
+    jaren: [2025, 2026]
+  - code: TERMIJN
+    naam: Termijndeposito AlwaysOn
+    productlijn: termijndeposito
+    jaren: [2024, 2025, 2026]
+  - code: SPARKS
+    naam: Sparks Hypotheken
+    productlijn: hypotheken
+    jaren: [2025, 2026]
+
+kanalen:
+  meta:             {label: "Meta (FB/IG)",         type: betaald_social}
+  linkedin:         {label: "LinkedIn",             type: betaald_social}
+  snapchat:         {label: "Snapchat",             type: betaald_social}
+  tiktok:           {label: "TikTok",               type: betaald_social}
+  dv360:            {label: "DV360 programmatic",   type: display}
+  readpeak:         {label: "Readpeak",             type: display}
+  dpg:              {label: "DPG netwerk",          type: display}
+  google_ads:       {label: "Google Ads (SEA/PMax/DemandGen)", type: sea}
+  google_search:    {label: "Google Search",        type: sea}
+  google_pmax:      {label: "Google Performance Max", type: sea}
+  dooh:             {label: "DOOH (digital OOH)",   type: ooh}
+  ooh:              {label: "OOH (static)",         type: ooh}
+  print:            {label: "Print",                type: print}
+  radio:            {label: "Radio (lineair)",      type: audio}
+  spotify:          {label: "Spotify audio",        type: audio}
+  audio:            {label: "Audio (overig)",       type: audio}
+  email:            {label: "E-mail",               type: owned}
+  meta_organic:     {label: "Meta organisch",       type: owned}
+  linkedin_organic: {label: "LinkedIn organisch",   type: owned}
+  other:            {label: "Overig",               type: other}
+
+fases:
+  awareness:    {label: "Awareness",    default_kpi: reach}
+  consideratie: {label: "Consideratie", default_kpi: ctr}
+  conversie:    {label: "Conversie",    default_kpi: cpa}
+  loyalty:      {label: "Loyalty",      default_kpi: open_rate}
+
+benchmarks:
+  kanaalsplit:
+    awareness:
+      meta: 30
+      google_pmax: 10
+      dv360: 25
+      tiktok: 10
+      spotify: 10
+      ooh: 15
+    consideratie:
+      meta: 30
+      google_search: 30
+      dv360: 15
+      linkedin: 15
+      email: 10
+    conversie:
+      google_search: 45
+      meta: 25
+      dpg: 15
+      email: 10
+      linkedin: 5
+    loyalty:
+      email: 60
+      meta: 25
+      google_search: 15
+  fasesplit_default:
+    awareness:    35
+    consideratie: 25
+    conversie:    35
+    loyalty:       5
+
+keybeliefs:
+  - kanaal: tiktok
+    fase: awareness
+    multiplier: 1.25
+    reden: "Jonge doelgroep verschuift van Meta naar TikTok (Q1-2026)."
+  - kanaal: print
+    fase: awareness
+    multiplier: 0.0
+    reden: "Geen print in 2026-plan."
+  - kanaal: dpg
+    fase: conversie
+    multiplier: 1.15
+    reden: "DPG-netwerk converteert goed op spaarproposities."
+
+flight_defaults:
+  min_flight_dagen: 7
+  warmup_dagen: 3
+  cooldown_dagen: 2
+  fase_volgorde: [awareness, consideratie, conversie, loyalty]
+  fase_duur_aandeel:
+    awareness:    0.30
+    consideratie: 0.25
+    conversie:    0.40
+    loyalty:      0.05
+
+kpi_targets:
+  # Kostenmetrieken per fase. Planner kan per tactiek overschrijven,
+  # anders worden deze als default gebruikt. Afgeleide metrieken (impressies,
+  # clicks, bereik, conversies) worden door planningsmachine zelf berekend:
+  #   impressies = budget / cpm * 1000
+  #   clicks     = budget / cpc    (of impressies * ctr_pct/100 als cpc ontbreekt)
+  #   bereik     = impressies / gcf
+  #   conversies = budget / cpa
+  awareness:    {primary: reach, cpm: 12.0, gcf: 3.0}
+  consideratie: {primary: ctr,   cpm: 8.0,  ctr_pct: 1.2}
+  conversie:    {primary: cpa,   cpc: 1.50, cpa: 85.0}
+  loyalty:      {primary: open,  cpm: 6.0}
+
+exact:
+  divisie_code: "1234567"
+  grootboek_media: "4100"
+  grootboek_fee:   "4200"
+  kostenplaats_default: "MKT-NIBC"
+
+creditcard:
+  kaart_laatste4: "4242"
+  reconcile_match: [klant, campagne, kanaal]
+
+# Uren-defaults voor het plan-kader. Posten worden regel-voor-regel in
+# het Plan-tabblad getoond met tarief, aantal_uren en kosten.
+uren_defaults:
+  tarief: 110
+  posten:
+    setup campagne:       8
+    beheer campagne:      12
+    reporting campagne:   12
+    project management:   6
+
+# Default kostenmetrieken per (kanaal, formaat). Lookup volgorde:
+#   1. by_combi[kanaal][formaat]   - specifieke combi
+#   2. by_formaat[formaat]          - format-level (bv. native overal hetzelfde)
+#   3. by_kanaal[kanaal]            - platform-level fallback
+# Formaten: video, audio, static, carousel, native, html5_hi, html5_standard
+benchmarks_per_format:
+  by_kanaal:
+    meta:      {cpm: 3.50,  ctr_pct: 1.0}
+    tiktok:    {cpm: 2.85,  ctr_pct: 1.25}
+    dpg:       {cpm: 6.25,  ctr_pct: 0.5}
+    linkedin:  {cpm: 12.00, ctr_pct: 1.1}
+  by_formaat:
+    native:         {cpm: 2.00, ctr_pct: 0.85}
+    html5_hi:       {cpm: 9.00, ctr_pct: 0.3}
+    html5_standard: {cpm: 4.50, ctr_pct: 0.13}
+  by_combi:
+    dv360:
+      html5_hi:       {cpm: 9.00, ctr_pct: 0.3}
+      html5_standard: {cpm: 4.50, ctr_pct: 0.13}
+      native:         {cpm: 2.00, ctr_pct: 0.85}
+    readpeak:
+      native: {cpm: 2.00, ctr_pct: 0.85}
+    dpg:
+      native: {cpm: 2.00, ctr_pct: 0.85}
