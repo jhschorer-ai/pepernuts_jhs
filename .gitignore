@@ -30,6 +30,5 @@ uit_*/
 Thumbs.db
 tests/_output/
 
-# === Klant-specifieke pilots/configs (niet naar public repo) ===
+# === Klant-specifieke pilots (niet naar public repo) ===
 tests/pilot_nibc_*.py
-config/klanten/config_nibc.yaml

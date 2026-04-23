@@ -55,7 +55,7 @@ rapportage:
     - aanbevelingen_volgende_campagne
 
 plan_bronnen:
-  google_sheet_master: "https://docs.google.com/spreadsheets/d/12aD3ACC5L0f5koaBrCf0i1TXL_uGY86o9xh6DiO2MZY"
+  google_sheet_master: ""
   excel_patroon: "NIBC - *.xlsx"
 
 # =========================================================================
@@ -190,7 +190,7 @@ creditcard:
 # Uren-defaults voor het plan-kader. Posten worden regel-voor-regel in
 # het Plan-tabblad getoond met tarief, aantal_uren en kosten.
 uren_defaults:
-  tarief: 110
+  tarief: 100
   posten:
     setup campagne:       8
     beheer campagne:      12
