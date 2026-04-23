@@ -1,0 +1,44 @@
+klant:
+  code: aoc
+  naam: Art of Colors
+  type: retail
+financieel:
+  btw_pct: 21.0
+  valuta: EUR
+  agency_fee_pct: 0.0
+kanalen:
+  meta:
+    label: Meta (FB/IG)
+    type: betaald_social
+  tiktok:
+    label: TikTok
+    type: betaald_social
+fases:
+  awareness:
+    label: Awareness
+    default_kpi: reach
+  consideratie:
+    label: Consideratie
+    default_kpi: ctr
+  conversie:
+    label: Conversie
+    default_kpi: cpa
+  loyalty:
+    label: Loyalty
+    default_kpi: open_rate
+kpi_targets:
+  awareness:
+    primary: reach
+  consideratie:
+    primary: ctr
+  conversie:
+    primary: cpa
+  loyalty:
+    primary: open_rate
+uren_defaults:
+  tarief: 105.0
+  posten:
+    setup campagne: 8.0
+    beheer campagne: 12.0
+    reporting campagne: 12.0
+    project management: 6.0
