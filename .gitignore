@@ -29,3 +29,7 @@ uit_*/
 .DS_Store
 Thumbs.db
 tests/_output/
+
+# === Klant-specifieke pilots/configs (niet naar public repo) ===
+tests/pilot_nibc_*.py
+config/klanten/config_nibc.yaml

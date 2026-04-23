@@ -1,4 +1,4 @@
-"""NIBC-plan-Excel generator (v0.3).
+"""Plan-Excel generator (v0.3).
 
 Veranderingen t.o.v. v0.2:
 - Tactiek_id bevat geen productlijn meer (BON/SPR eruit).

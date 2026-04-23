@@ -1,13 +1,13 @@
 """Tactiek-ID generator.
 
-Conventie (DBD v0.2, productlijn eruit):
+Conventie (v0.2, productlijn eruit):
     {KLANTCODE}-{YYYY}-{MM}-{Campagne}-T{NN}                     (single flight)
     {KLANTCODE}-{YYYY}-{MM}-{Campagne}-D{D}T{NN}                 (multi-flight)
 
 Voorbeelden:
-    NIBC-2026-04-Paasbonus-T01                  (1 doorlopende campagneperiode)
-    NIBC-2026-03-Paasbonus-D1T01                (flight 1 van meerdere)
-    NIBC-2026-03-Paasbonus-D3T05                (flight 3)
+    KLANT-2026-04-Voorjaar-T01                  (1 doorlopende campagneperiode)
+    KLANT-2026-03-Voorjaar-D1T01                (flight 1 van meerdere)
+    KLANT-2026-03-Voorjaar-D3T05                (flight 3)
 
 Productlijn (BON, SPR, ...) zit NIET in de id; evaluatiemachine leest
 die uit de `productlijn_code`-kolom van de plan-Excel - handig als tag,
@@ -24,7 +24,7 @@ _SLUG_STRIP = re.compile(r"[^A-Za-z0-9]+")
 
 
 def _slug_campagne(naam: str) -> str:
-    """CamelCase-achtige slug: 'Paasbonus 2026' -> 'Paasbonus2026'."""
+    """CamelCase-achtige slug: 'Voorjaar 2026' -> 'Voorjaar2026'."""
     tokens = [t for t in _SLUG_STRIP.split(naam or "") if t]
     return "".join(t[:1].upper() + t[1:] for t in tokens)
 
@@ -50,7 +50,7 @@ def build_tactiek_id(
 
     Parameters
     ----------
-    klantcode     : klant-code uit config (bv. NIBC).
+    klantcode     : klant-code uit config (bv. ABCD).
     start         : startdatum - yyyy-mm worden eruit afgeleid.
     campagne_naam : vrije tekst (slugify naar PascalCase).
     nr            : volgnummer 1..99 binnen de flight (of globaal bij single).
@@ -96,7 +96,7 @@ def derive_productlijn_code(klant_cfg: dict, productlijn_naam: str) -> str:
     Productlijn zit niet meer in het tactiek_id, maar we gebruiken 'm nog
     voor de `productlijn_code`-tag op plan-rijen (evaluatiemachine-compat).
 
-    Ondersteunt zowel lijst- als dict-vorm (NIBC-format).
+    Ondersteunt zowel lijst- als dict-vorm (dict-format).
     """
     productlijnen = (klant_cfg or {}).get("productlijnen") or []
     needle = (productlijn_naam or "").strip()

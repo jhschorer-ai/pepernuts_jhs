@@ -1,4 +1,4 @@
-"""Validator voor de DBD tactiek-id naming-convention (v0.2).
+"""Validator voor de tactiek-id naming-convention (v0.2).
 
 Conventie (zie generators/tactiek_id.py):
     {KLANTCODE}-{YYYY}-{MM}-{Campagne}-T{NN}

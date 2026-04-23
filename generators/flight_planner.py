@@ -3,8 +3,8 @@
 Flights zijn expliciete tijdvensters (user-defined) met elk een eigen
 fase-mix. Elke flight krijgt een D-prefix in de tactiek-id:
 
-    NIBC-BON-2026-03-Paasbonus-D1T01    (flight 1, tactiek 1)
-    NIBC-BON-2026-03-Paasbonus-D2T05    (flight 2, tactiek 5)
+    KLANT-2026-03-Voorjaar-D1T01    (flight 1, tactiek 1)
+    KLANT-2026-03-Voorjaar-D2T05    (flight 2, tactiek 5)
 
 Gebruik
 -------

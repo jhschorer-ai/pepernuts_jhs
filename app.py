@@ -1,4 +1,4 @@
-"""DBD Planningsmachine - multi-step Streamlit form.
+"""Campagne planner - multi-step Streamlit form.
 
 Draaien:
     streamlit run app.py
@@ -39,7 +39,7 @@ from validators.naming import validate_plan
 
 # ---------- Page setup + state --------------------------------------------------
 
-st.set_page_config(page_title="DBD Planningsmachine", layout="wide")
+st.set_page_config(page_title="Campagne planner", layout="wide")
 
 # Init session state
 _defaults = {
@@ -70,7 +70,7 @@ def _goto(step: int):
 
 # ---------- Header ---------------------------------------------------------------
 
-st.title("DBD Planningsmachine")
+st.title("Campagne planner")
 st.caption("Genereer evaluatie-ready plan-Excel met afgedwongen naming-convention.")
 st.progress(st.session_state.step / TOTAL_STEPS,
             text=f"Stap {st.session_state.step} van {TOTAL_STEPS}")
@@ -80,7 +80,7 @@ st.progress(st.session_state.step / TOTAL_STEPS,
 
 if st.session_state.step == 1:
     st.header("1. Klant & campagne")
-    klanten = list_klanten() or ["nibc"]
+    klanten = list_klanten() or ["demo"]
     default_idx = klanten.index(st.session_state.klant_code) if st.session_state.klant_code in klanten else 0
     klant = st.selectbox("Klant", klanten, index=default_idx)
 
@@ -223,7 +223,7 @@ elif st.session_state.step == 3:
     cfg = st.session_state.cfg
 
     # BTW-modus: klanten waar BTW verrekenbaar is werken meestal met ex-BTW-budgetten;
-    # banken (zoals NIBC, vrijgesteld) met incl-BTW. Vaste tarief 21%.
+    # banken (vrijgesteld) met incl-BTW. Vaste tarief 21%.
     klant_type = (cfg.get("klant") or {}).get("type", "").lower()
     default_modus = "incl" if klant_type == "bank" else "ex"
     if "btw_modus" not in st.session_state or st.session_state.btw_modus is None:
@@ -729,7 +729,4 @@ elif st.session_state.step == 6:
         st.success("Excel gegenereerd - klik hierboven om te downloaden.")
 
     st.divider()
-    if st.button("Nieuwe planning starten"):
-        for k in list(st.session_state.keys()):
-            del st.session_state[k]
-        st.rerun()
+    if 

@@ -1,4 +1,4 @@
-# DBD Planningsmachine
+# Planningsmachine
 
 Campagne-planning met afgedwongen naming-conventies. Produceert een
 plan-Excel dat de evaluatiemachine direct kan verwerken.
@@ -6,7 +6,7 @@ plan-Excel dat de evaluatiemachine direct kan verwerken.
 ## Scope V0.1
 
 1. **Tactiek-naming generator** - genereert tactiek_id's uit klant,
-   productlijn, campagne, startdatum en volgnummer.
+   campagne, startdatum en volgnummer.
 2. **Plan-Excel generator** - schrijft evaluatie-machine-compatible xlsx
    met tabbladen Plan, Flights, Budget, Benchmarks, Keybeliefs, Meta.
 3. **Budget-splitter** - verdeelt totaalbudget over fases en kanalen op
@@ -30,35 +30,34 @@ planningsmachine/
 ├── config/
 │   ├── loader.py                 # klant-config loader (shared-data + fallback)
 │   └── klanten/                  # repo-kopie van klant-configs (Cloud-fallback)
-│       └── config_nibc.yaml
 ├── generators/
-│   ├── tactiek_id.py             # {KLANT}-{PL}-{YYYY}-{MM}-{Camp}-T{NN}
-│   ├── plan_excel.py             # NIBC-plan-formaat (evaluatiemachine-ready)
+│   ├── tactiek_id.py             # {KLANT}-{YYYY}-{MM}-{Camp}-T{NN}
+│   ├── plan_excel.py             # plan-formaat (evaluatiemachine-ready)
 │   ├── budget_split.py           # benchmark + keybelief verdeling
 │   └── flight_planner.py         # sequentiele fase-flights
 ├── validators/
 │   └── naming.py                 # tactiek_id + plan-rij validatie
 └── tests/
-    └── pilot_nibc_paasbonus_2026.py  # end-to-end pilot (draait groen)
+    └── pilot_*.py                # end-to-end smoke-tests
 ```
 
 ## Tactiek-ID conventie
 
 ```
-{KLANTCODE}-{PRODUCTLIJN}-{YYYY}-{MM}-{Campagne}-T{NN}
+{KLANTCODE}-{YYYY}-{MM}-{Campagne}-T{NN}
 ```
 
-Voor deel-campagnes (meerdelige NIBC-campagnes):
+Voor deel-campagnes (meerdelige campagnes):
 
 ```
-{KLANTCODE}-{PRODUCTLIJN}-{YYYY}-{MM}-{Campagne}-D{D}T{NN}
+{KLANTCODE}-{YYYY}-{MM}-{Campagne}-D{D}T{NN}
 ```
 
 Voorbeelden:
 
-- `NIBC-BON-2026-04-Paasbonus-T01`
-- `NIBC-SPR-2026-03-Termijndeposito-D1T01` (hoofdcampagne)
-- `NIBC-SPR-2026-03-Termijndeposito-D3T02` (verlenging)
+- `KLANT-2026-04-Voorjaar-T01`
+- `KLANT-2026-03-Termijndeposito-D1T01` (hoofdcampagne)
+- `KLANT-2026-03-Termijndeposito-D3T02` (verlenging)
 
 ### Belangrijk
 
@@ -71,7 +70,7 @@ dit af met een "Dubbele tactiek_id"-issue.
 
 | Tabblad | Inhoud |
 | --- | --- |
-| Plan | 1 rij per tactiek, 33 kolommen (hoofdinput evaluatiemachine) |
+| Plan | 1 rij per tactiek (hoofdinput evaluatiemachine) |
 | Flights | 1 rij per fase met start/eind, KPI, warmup/cooldown-vlaggen |
 | Budget | Fase x kanaal split-result (pct + EUR) |
 | Benchmarks | Gebruikte benchmark-percentages (auditspoor) |
@@ -83,12 +82,5 @@ dit af met een "Dubbele tactiek_id"-issue.
 ```powershell
 cd planningsmachine
 pip install -r requirements.txt
-python tests/pilot_nibc_paasbonus_2026.py   # end-to-end smoke-test
 streamlit run app.py
 ```
-
-## Pilot status
-
-**Pilot**: NIBC Paasbonus 2026, totaalbudget EUR 120.000, 15 maart - 20 april 2026.
-End-to-end test draait groen: 19 tactieken over 4 fases, validatie OK,
-evaluatie-machine-compatible Excel gegenereerd.
