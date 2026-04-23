@@ -414,12 +414,77 @@ else:
 
 klant_code_save = cfg["klant"].get("code") or "klant"
 fname = f"config_{klant_code_save.lower()}.yaml"
-st.download_button(
-    label=f"Download {fname}",
-    data=yaml_str.encode("utf-8"),
-    file_name=fname,
-    mime="application/x-yaml",
-    disabled=bool(issues),
-)
-st.caption(f"Commit het bestand daarna naar **`config/klanten/{fname}`** in de repo "
-           "en push naar GitHub — Streamlit Cloud deploy't automatisch opnieuw.")
+
+col_dl, col_mail = st.columns(2)
+
+with col_dl:
+    st.download_button(
+        label=f"Download {fname}",
+        data=yaml_str.encode("utf-8"),
+        file_name=fname,
+        mime="application/x-yaml",
+        disabled=bool(issues),
+    )
+
+with col_mail:
+    submitter = st.text_input(
+        "Jouw naam / mail (optioneel)",
+        key="submitter_naam",
+        placeholder="bijv. Naam of mailadres",
+        help="Wordt meegestuurd zodat Jacob weet wie 'm heeft aangepast.",
+    )
+    if st.button("Stuur naar admin", type="primary", disabled=bool(issues)):
+        try:
+            import base64
+            from datetime import datetime
+
+            import requests
+
+            admin_mail   = st.secrets.get("ADMIN_MAIL", "jacob@deepbluedigital.nl")
+            api_key      = st.secrets["RESEND_API_KEY"]
+            from_address = st.secrets.get("RESEND_FROM", "onboarding@resend.dev")
+
+            body_text = (
+                f"Nieuwe/aangepaste klant-config voor: {klant_code_save}\n"
+                f"Bewerkt door: {submitter or '(niet opgegeven)'}\n"
+                f"Datum: {datetime.now().isoformat(timespec='seconds')}\n\n"
+                "Instructies om door te voeren:\n"
+                f"  1. Sla bijlage op als config/klanten/{fname}\n"
+                "  2. Commit + push naar main\n"
+                "  3. Streamlit Cloud herdeployt automatisch (~30s)\n\n"
+                "YAML-content (ook als bijlage):\n"
+                f"{'-'*60}\n{yaml_str}"
+            )
+
+            payload = {
+                "from": from_address,
+                "to": [admin_mail],
+                "subject": f"[Planningsmachine] Config-wijziging: {klant_code_save}",
+                "text": body_text,
+                "attachments": [{
+                    "filename": fname,
+                    "content": base64.b64encode(yaml_str.encode("utf-8")).decode("ascii"),
+                }],
+            }
+
+            resp = requests.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json=payload,
+                timeout=10,
+            )
+            if resp.status_code >= 300:
+                st.error(f"Verzenden mislukt ({resp.status_code}): {resp.text}")
+            else:
+                st.success(f"Mail verstuurd naar {admin_mail}. Admin zet 'm live.")
+        except KeyError as e:
+            st.error(f"Mail-instellingen ontbreken in Streamlit Secrets: {e}. "
+                     "Vraag de admin RESEND_API_KEY toe te voegen.")
+        except Exception as e:
+            st.error(f"Verzenden mislukt: {e}")
+
+st.caption("Download de YAML of stuur 'm naar de admin. De admin commit 'm naar "
+           f"**`config/klanten/{fname}`** — Streamlit Cloud deploy't dan automatisch opnieuw.")
