@@ -449,9 +449,13 @@ with col_mail:
                 f"Bewerkt door: {submitter or '(niet opgegeven)'}\n"
                 f"Datum: {datetime.now().isoformat(timespec='seconds')}\n\n"
                 "Instructies om door te voeren:\n"
-                f"  1. Sla bijlage op als config/klanten/{fname}\n"
-                "  2. Commit + push naar main\n"
-                "  3. Streamlit Cloud herdeployt automatisch (~30s)\n\n"
+                f"  1. Sla de bijlage op als config/klanten/{fname} in de repo.\n"
+                "  2. Open PowerShell en run de volgende commando's:\n\n"
+                '     cd "C:\\Users\\JacobDeepBlueDigital\\Fishbyte Digital\\Deepblue Digital - Documenten\\Claude AI\\planningsmachine"\n'
+                f"     git add config/klanten/{fname}\n"
+                f'     git commit -m "Klantconfig update: {klant_code_save}"\n'
+                "     git push\n\n"
+                "  3. Streamlit Cloud detecteert de push en herdeployt automatisch (~30s).\n\n"
                 "YAML-content (ook als bijlage):\n"
                 f"{'-'*60}\n{yaml_str}"
             )
